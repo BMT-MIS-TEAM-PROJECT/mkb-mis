@@ -1,1 +1,2 @@
-# mkb-mis server python requirements
+fastapi
+uvicorn
