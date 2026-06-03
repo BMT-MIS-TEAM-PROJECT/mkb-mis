@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>МИС - Мочекаменная болезнь</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Экран входа -->
+    <div id="login-screen" class="screen active">
+        <div class="login-container">
+            <h1>МИС МКБ</h1>
+            <h2>Вход в систему</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Логин:</label>
+                    <input type="text" id="username" required placeholder="Введите логин">
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль:</label>
+                    <input type="password" id="password" required placeholder="Введите пароль">
+                </div>
+                <button type="submit" class="btn btn-primary">Войти</button>
+                <div id="login-error" class="error-message"></div>
+            </form>
+            <div class="demo-info">
+                <p><strong>Доступ для входа:</strong></p>
+                <p>Врач: <strong>doctor</strong> / <strong>1234</strong></p>
+                <p>Врач 2: <strong>doctor_petrova</strong> / <strong>1234</strong></p>
+                <p>Админ: <strong>admin</strong> / <strong>admin</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Главный экран -->
+    <div id="main-screen" class="screen">
+        <header>
+            <div class="header-left">
+                <h1>МИС МКБ</h1>
+                <span id="user-role" class="badge"></span>
+            </div>
+            <div class="header-right">
+                <span id="current-user"></span>
+                <button id="logout-btn" class="btn btn-secondary">Выйти</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <nav class="sidebar">
+                <button class="nav-btn active" data-section="patients">Пациенты</button>
+                <button class="nav-btn" data-section="add-patient">Добавить пациента</button>
+                <button id="admin-btn" class="nav-btn" data-section="admin" style="display: none;">Управление врачами</button>
+            </nav>
+
+            <main class="content">
+                <!-- Секция поиска пациентов -->
+                <section id="patients-section" class="section active">
+                    <h2>Поиск пациентов</h2>
+                    <div class="search-bar">
+                        <input type="text" id="patient-search" placeholder="Поиск по ФИО или номеру карты (например: Сидоров или P001)">
+                        <button id="search-btn" class="btn btn-primary">Найти</button>
+                    </div>
+                    <div id="patients-list" class="list-container"></div>
+                </section>
+
+                <!-- Секция добавления пациента -->
+                <section id="add-patient-section" class="section">
+                    <h2>Добавление нового пациента</h2>
+                    <form id="add-patient-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="last-name">Фамилия *</label>
+                                <input type="text" id="last-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="first-name">Имя *</label>
+                                <input type="text" id="first-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="middle-name">Отчество</label>
+                                <input type="text" id="middle-name">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="birth-date">Дата рождения *</label>
+                                <input type="date" id="birth-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Телефон</label>
+                                <input type="tel" id="phone" placeholder="+7 (999) 123-45-67">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="anamnesis">Анамнез</label>
+                            <textarea id="anamnesis" rows="3" placeholder="Хронические заболевания, история болезни..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </form>
+                </section>
+
+                <!-- Секция карточки пациента -->
+                <section id="patient-card-section" class="section">
+                    <button id="back-to-list" class="btn btn-secondary">← Назад к списку</button>
+                    <div id="patient-card-content"></div>
+                </section>
+
+                <!-- Секция администратора -->
+                <section id="admin-section" class="section">
+                    <h2>Управление врачами</h2>
+                    
+                    <button id="show-add-doctor-btn" class="btn btn-primary" style="margin-bottom: 20px;">+ Добавить врача</button>
+                    
+                    <div id="add-doctor-form" class="hidden" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <h3>Новый врач</h3>
+                        <form id="doctor-form">
+                            <div class="form-group">
+                                <label for="doc-name">ФИО *</label>
+                                <input type="text" id="doc-name" required placeholder="Иванов Иван Иванович">
+                            </div>
+                            <div class="form-group">
+                                <label for="doc-login">Логин *</label>
+                                <input type="text" id="doc-login" required placeholder="doctor_ivanov">
+                            </div>
+                            <div class="form-group">
+                                <label for="doc-password">Пароль *</label>
+                                <input type="password" id="doc-password" required placeholder="Не менее 4 символов">
+                            </div>
+                            <button type="submit" class="btn btn-success">Создать врача</button>
+                            <button type="button" id="cancel-add-doctor" class="btn btn-secondary">Отмена</button>
+                        </form>
+                    </div>
+                    
+                    <h3>Список врачей</h3>
+                    <div id="doctors-list" class="list-container"></div>
+                    
+                    <div id="doctor-patients-section" class="hidden" style="margin-top: 30px;">
+                        <h3>Пациенты врача: <span id="selected-doctor-name"></span></h3>
+                        <button id="back-to-doctors" class="btn btn-secondary" style="margin-bottom: 15px;">← Назад к списку врачей</button>
+                        <div id="doctor-patients-list" class="list-container"></div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script src="auth.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
