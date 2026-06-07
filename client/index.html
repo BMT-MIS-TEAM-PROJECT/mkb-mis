@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>МКБ-МИС — рабочее место врача</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===================== ЭКРАН ВХОДА ===================== -->
+  <section id="view-login" class="view view--login">
+    <form id="login-form" class="login-card" autocomplete="off">
+      <div class="login-logo">МКБ<span>·</span>МИС</div>
+      <p class="login-subtitle">Медицинская информационная система<br />Мочекаменная болезнь</p>
+
+      <label class="field">
+        <span class="field__label">Логин</span>
+        <input type="text" id="login-username" placeholder="doctor_ivanov" required />
+      </label>
+
+      <label class="field">
+        <span class="field__label">Пароль</span>
+        <input type="password" id="login-password" placeholder="••••••" required />
+      </label>
+
+      <div id="login-error" class="form-error" hidden></div>
+
+      <button type="submit" class="btn btn--primary btn--block">Войти</button>
+
+      <p class="login-hint">
+        Тестовые аккаунты:<br />
+        <code>doctor_ivanov / hash123</code> — врач<br />
+        <code>admin / admin</code> — администратор
+      </p>
+    </form>
+  </section>
+
+  <!-- ===================== ОСНОВНОЕ ПРИЛОЖЕНИЕ ===================== -->
+  <div id="app" class="app" hidden>
+
+    <!-- Шапка -->
+    <header class="topbar">
+      <div class="topbar__brand" id="nav-home">МКБ<span>·</span>МИС</div>
+      <nav class="topbar__nav">
+        <button class="navlink" id="nav-patients">Пациенты</button>
+        <button class="navlink" id="nav-admin" hidden>Аккаунты врачей</button>
+      </nav>
+      <div class="topbar__user">
+        <span id="current-user" class="user-badge"></span>
+        <button class="btn btn--ghost" id="btn-logout">Выйти</button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- ----------- СПИСОК ПАЦИЕНТОВ ----------- -->
+      <section id="view-patients" class="view">
+        <div class="page-head">
+          <h1>Пациенты</h1>
+          <button class="btn btn--primary" id="btn-add-patient">+ Добавить пациента</button>
+        </div>
+
+        <div class="search-bar">
+          <input type="search" id="patient-search"
+                 placeholder="Поиск по ФИО или номеру карты пациента…" />
+        </div>
+
+        <div class="table-wrap">
+          <table class="table" id="patients-table">
+            <thead>
+              <tr>
+                <th>№ карты</th>
+                <th>ФИО</th>
+                <th>Лечащий врач</th>
+                <th class="num">Камни</th>
+                <th class="num">Обследования</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="patients-tbody"></tbody>
+          </table>
+          <div id="patients-empty" class="empty-state" hidden>Пациенты не найдены</div>
+        </div>
+      </section>
+
+      <!-- ----------- КАРТОЧКА ПАЦИЕНТА ----------- -->
+      <section id="view-patient" class="view" hidden>
+        <button class="link-back" id="btn-back-to-list">← К списку пациентов</button>
+
+        <div class="page-head">
+          <h1 id="patient-title">Карточка пациента</h1>
+          <div class="page-head__actions">
+            <button class="btn btn--ghost" id="btn-edit-patient">Редактировать</button>
+          </div>
+        </div>
+
+        <!-- Данные пациента -->
+        <div class="card">
+          <h2 class="card__title">Данные пациента</h2>
+          <form id="patient-form" class="grid-form">
+            <label class="field">
+              <span class="field__label">Номер карты</span>
+              <input type="text" name="id_patient" disabled />
+            </label>
+            <label class="field field--wide">
+              <span class="field__label">ФИО</span>
+              <input type="text" name="full_name" disabled />
+            </label>
+            <label class="field field--wide">
+              <span class="field__label">Лечащий врач</span>
+              <select name="id_user" disabled></select>
+            </label>
+            <label class="field field--full">
+              <span class="field__label">Анамнез</span>
+              <textarea name="anamnesis" rows="4" disabled></textarea>
+            </label>
+
+            <div class="form-actions" id="patient-form-actions" hidden>
+              <button type="button" class="btn btn--ghost" id="btn-cancel-edit">Отмена</button>
+              <button type="submit" class="btn btn--primary">Сохранить</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Журнал: камни -->
+        <div class="card">
+          <div class="card__head">
+            <h2 class="card__title">Камни</h2>
+            <button class="btn btn--sm" id="btn-add-stone">+ Добавить камень</button>
+          </div>
+          <div class="table-wrap">
+            <table class="table table--compact">
+              <thead>
+                <tr>
+                  <th>№</th>
+                  <th>Локализация</th>
+                  <th class="num">Размер, мм</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="stones-tbody"></tbody>
+            </table>
+            <div id="stones-empty" class="empty-state" hidden>Камни не зарегистрированы</div>
+          </div>
+        </div>
+
+        <!-- Журнал: обследования -->
+        <div class="card">
+          <div class="card__head">
+            <h2 class="card__title">Обследования</h2>
+            <button class="btn btn--sm" id="btn-add-exam">+ Добавить обследование</button>
+          </div>
+          <div class="table-wrap">
+            <table class="table table--compact">
+              <thead>
+                <tr>
+                  <th>№</th>
+                  <th>Тип обследования</th>
+                  <th>Врач</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="exams-tbody"></tbody>
+            </table>
+            <div id="exams-empty" class="empty-state" hidden>Обследования не зарегистрированы</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ----------- АДМИН: АККАУНТЫ ВРАЧЕЙ ----------- -->
+      <section id="view-admin" class="view" hidden>
+        <div class="page-head">
+          <h1>Аккаунты врачей</h1>
+          <button class="btn btn--primary" id="btn-add-account">+ Новый аккаунт</button>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>ID</th><th>Логин</th><th>ФИО</th><th>Роль</th></tr>
+            </thead>
+            <tbody id="accounts-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===================== МОДАЛЬНОЕ ОКНО ===================== -->
+  <div id="modal-overlay" class="modal-overlay" hidden>
+    <div class="modal">
+      <div class="modal__head">
+        <h3 id="modal-title">Заголовок</h3>
+        <button class="modal__close" id="modal-close">&times;</button>
+      </div>
+      <form id="modal-form" class="modal__body grid-form"></form>
+      <div class="modal__foot">
+        <button type="button" class="btn btn--ghost" id="modal-cancel">Отмена</button>
+        <button type="button" class="btn btn--primary" id="modal-submit">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Уведомления -->
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="js/mock-data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
