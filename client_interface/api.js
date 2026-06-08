@@ -114,7 +114,7 @@ const API = {
             history: [
                 ...data.stones.map(s => ({
                     id: s.id,
-                    date: new Date().toISOString().split('T')[0],
+                    date: s.detected_date || '',
                     type: 'stone',
                     description: `Камень в ${s.location}`,
                     size: `${s.size_mm} мм`,
@@ -160,7 +160,8 @@ const API = {
                 patient_id: patientId,
                 location: stoneData.location || 'Не указано',
                 size_mm: parseFloat(stoneData.size) || 0,
-                stone_type: stoneData.stoneType || null
+                stone_type: stoneData.stoneType || null,
+                detected_date: stoneData.detectedDate || new Date().toISOString().split('T')[0]
             })
         });
         

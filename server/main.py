@@ -54,6 +54,7 @@ class StoneCreate(BaseModel):
     location: str
     size_mm: float
     stone_type: str | None = None
+    detected_date: str | None = None
 
 
 class Stone(StoneCreate):
@@ -138,12 +139,12 @@ patients: List[Patient] = [
 ]
 
 stones: List[Stone] = [
-    Stone(id=1, patient_id=1, location="Левая почка", size_mm=12.0, stone_type="оксалатный"),
-    Stone(id=2, patient_id=1, location="Мочеточник правый", size_mm=5.0, stone_type="уратный"),
-    Stone(id=3, patient_id=2, location="Правая почка", size_mm=8.0, stone_type="фосфатный"),
-    Stone(id=4, patient_id=3, location="Мочевой пузырь", size_mm=15.0, stone_type="оксалатный"),
-    Stone(id=5, patient_id=4, location="Правая почка", size_mm=4.0, stone_type="не определён"),
-    Stone(id=6, patient_id=5, location="Левая почка", size_mm=6.0, stone_type="уратный"),
+    Stone(id=1, patient_id=1, location="Левая почка", size_mm=12.0, stone_type="оксалатный", detected_date="2024-01-15"),
+    Stone(id=2, patient_id=1, location="Мочеточник правый", size_mm=5.0, stone_type="уратный", detected_date="2024-01-15"),
+    Stone(id=3, patient_id=2, location="Правая почка", size_mm=8.0, stone_type="фосфатный", detected_date="2024-02-10"),
+    Stone(id=4, patient_id=3, location="Мочевой пузырь", size_mm=15.0, stone_type="оксалатный", detected_date="2024-03-05"),
+    Stone(id=5, patient_id=4, location="Правая почка", size_mm=4.0, stone_type="не определён", detected_date="2024-03-12"),
+    Stone(id=6, patient_id=5, location="Левая почка", size_mm=6.0, stone_type="уратный", detected_date="2024-04-01"),
 ]
 
 examinations: List[Examination] = [
@@ -227,7 +228,7 @@ def get_patient_card(patient_id: int):
     if patient.doctor_id:
         try:
             doctor = find_user(patient.doctor_id)
-        except:
+        except HTTPException:
             pass
     
     patient_stones = [s for s in stones if s.patient_id == patient_id]

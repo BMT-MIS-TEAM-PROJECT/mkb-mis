@@ -203,6 +203,10 @@ function showAddStoneModal(patientId) {
                 <label>Тип камня</label>
                 <input type="text" id="stone-type" placeholder="оксалатный, уратный...">
             </div>
+            <div class="form-group">
+                <label>Дата обнаружения</label>
+                <input type="date" id="stone-date" value="${new Date().toISOString().split('T')[0]}">
+            </div>
             <button type="submit" class="btn btn-danger">Сохранить</button>
         </form>
     `;
@@ -215,7 +219,8 @@ function showAddStoneModal(patientId) {
             await API.addStone(patientId, {
                 location: document.getElementById('stone-location').value,
                 size: document.getElementById('stone-size').value,
-                stoneType: document.getElementById('stone-type').value
+                stoneType: document.getElementById('stone-type').value,
+                detectedDate: document.getElementById('stone-date').value
             });
             modal.classList.remove('active');
             const patient = await API.getPatientById(patientId);
